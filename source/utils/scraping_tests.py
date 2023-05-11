@@ -3,6 +3,7 @@
 import requests
 import json
 
+
 from bs4 import BeautifulSoup
 
 
@@ -18,10 +19,4 @@ response = requests.get(immo_url, cookies = user_cookie, params = {})
  
 with open('single_building_info.json', 'w') as f:
     json.dump(response.text, f)
-
-
-
-
-
-
 
