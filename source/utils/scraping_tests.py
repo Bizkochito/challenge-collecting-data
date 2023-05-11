@@ -3,6 +3,8 @@
 import requests
 import json
 
+from bs4 import BeautifulSoup
+
 
 immo_url = "https://www.immoweb.be/fr/annonce/immeuble-mixte/a-vendre/alost/9300/10557403"
 
