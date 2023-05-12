@@ -16,7 +16,7 @@ def extract_urls_lists(search_page_url: str) -> List[str]:
             list_of_urls.append(link.get('href'))
     return list_of_urls
 
-def extract_all_urls(number_of_urls: int) -> List[str]:
+def extract_x_urls(number_of_urls: int=30) -> List[str]:
     immo_base_url = "https://www.immoweb.be/fr/recherche/maison/a-vendre?countries=BE&page="
     immo_end_url = "&orderBy=relevance"
     searchpages_urls_list =[]
@@ -37,7 +37,7 @@ if __name__ == "__main__" :
     print("Running an extraction timed test with target: 9990 urls")
     start = time.perf_counter()
 
-    print(len(extract_all_urls(9990)))
+    print(len(extract_x_urls(9990)))
 
     end = time.perf_counter()
 
