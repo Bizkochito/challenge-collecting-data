@@ -2,7 +2,11 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-""" immo_url = "https://www.immoweb.be/fr/annonce/immeuble-mixte/a-vendre/alost/9300/10557403"
+from bs4 import BeautifulSoup
+
+
+immo_url = "https://www.immoweb.be/fr/annonce/immeuble-mixte/a-vendre/alost/9300/10557403"
+
 cookie_url="https://www.immoweb.be/cookie"
 
 user_cookie = requests.get(cookie_url).cookies
