@@ -24,18 +24,6 @@ for tables in table:
             td_tag = row.find('td', class_="classified-table__data")
             if th_tag and td_tag:
                 key = th_tag.string.strip()
-
-                """value_parts = []
-                for content in td_tag.contents:
-                    if content.name == 'span':
-                        span_text = content.get_text(strip=True)
-                        if span_text:
-                            value_parts.append(span_text)
-                    else:
-                        value_parts.append(str(content).strip())
-                
-                value = ' '.join(value_parts)
-                """
                 span_tag = td_tag.find('span', attrs={'aria-hidden': 'true'})
                 if span_tag:
                     value = span_tag.string.strip()
