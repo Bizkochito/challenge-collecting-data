@@ -15,6 +15,6 @@ with open('single_building_info.json', 'w') as f:
  """
 immo_base_url = "https://www.immoweb.be/fr/recherche/maison/a-vendre?countries=BE&page="
 immo_end_url = "&orderBy=relevance"
-for index in range(1,333):
+for index in range(1,334):
     full_url = immo_base_url + str(index) + immo_end_url
     print(full_url)
