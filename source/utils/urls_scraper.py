@@ -26,8 +26,6 @@ def extract_x_urls(number_of_urls: int=30) -> List[str]:
         searchpages_urls_list.append(full_url)
     
     full_urls_list =[]
-#for searchpage_url in searchpages_urls_list:
-#full_urls_list += extract_urls_lists(searchpage_url) 
 
     with Pool() as pool:
         full_urls_list=list(pool.map(extract_urls_lists, searchpages_urls_list))    
