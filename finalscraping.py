@@ -33,27 +33,25 @@ def extract_x_urls(number_of_urls: int=30) -> List[str]:
 
     with ThreadPoolExecutor() as pool:
         full_urls_list=list(pool.map(extract_urls_lists, searchpages_urls_list))    
-    return sum(full_urls_list,[])
+
+    if number_of_urls>9990:
+        immo_base_url = "https://www.immoweb.be/en/search/new-real-estate-project-apartments/for-sale?countries=BE&page="
+        immo_end_url = "&orderBy=relevance"
+        searchpages_urls_list =[]
+
+        for index in range(1,round(min(334,(number_of_urls-9990)/30 + 1))):
+            full_url = immo_base_url + str(index) + immo_end_url
+            searchpages_urls_list.append(full_url)
+
+        with ThreadPoolExecutor() as pool:
+            full_urls_list+=list(pool.map(extract_urls_lists, searchpages_urls_list))  
+            
+    return list(set(sum(full_urls_list,[])))
     
 extract_x_urls(30)
 
 
 pd.set_option('display.width', None)
-
-def make_one_data_frame(url):
-
-  response = requests.get(url)
-  test_page = response.text
-
-  dfs = pd.read_html(test_page)
-
-  full_df = pd.concat(dfs).dropna(thresh=2).T
-  full_df.columns = full_df.iloc[0]
-  full_df = full_df[1:]
-  full_df = full_df.loc[:, full_df.columns.isin(['Neighbourhood or locality','Building condition','Number of frontages','Living area','Kitchen type','Bedrooms','Bathrooms','Furnished','Surface of the plot','Garden surface','Swimming pool','Price','Terrace'])]
-
-  return full_df
-make_one_data_frame("https://www.immoweb.be/en/classified/house/for-sale/kortrijk/8500/10564478")
 
 def missing_data(url):
     response = requests.get(url)
@@ -68,7 +66,28 @@ def missing_data(url):
     df_dict=pd.DataFrame([property_info_dict])
     return df_dict
 
-list_of_urls = extract_x_urls(9990)
+def make_one_data_frame(url):
+    try:
+
+        response = requests.get(url)
+        test_page = response.text
+
+        dfs = pd.read_html(test_page)
+
+        full_df = pd.concat(dfs).dropna(thresh=2).T
+        full_df.columns = full_df.iloc[0]
+        full_df = full_df[1:]
+        full_df = full_df.loc[:, full_df.columns.isin(['Neighbourhood or locality','Building condition','Number of frontages','Living area','Kitchen type','Bedrooms','Bathrooms','Furnished','Surface of the plot','Garden surface','Swimming pool','Price','Terrace'])]
+        full_df = pd.concat([full_df.iloc[0], missing_data(url).iloc[0]], axis=0).to_frame().T 
+        
+    except:
+        print("error while getting the data")
+    return full_df
+make_one_data_frame("https://www.immoweb.be/en/classified/house/for-sale/kortrijk/8500/10564478")
+
+
+
+list_of_urls = extract_x_urls(10000)
 print(len(list_of_urls))
 print('list ready')
 dataframes_list = []
@@ -100,7 +119,7 @@ def data_clean(df, numerical_cols):
 numerical_cols = ['Number of frontages', 'Living area', 'Bedrooms', 'Bathrooms', 'Surface of the plot', 'Garden surface', 'Price']
 
 cleaned_data = data_clean(full_df, numerical_cols)
-cleaned_data.to_csv("cleaned_data_9990.csv")
+cleaned_data.to_csv("cleaned_data_12000.csv")
 end=time.time()
 print(end - start)
 
