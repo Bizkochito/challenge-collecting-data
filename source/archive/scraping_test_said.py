@@ -39,12 +39,12 @@ soup = BeautifulSoup(response.content,"html.parser")
 #         key_list.append(article.strip())
 # print(key_list)
 
-value_list=[]
-for elem in soup.find_all("td", attrs={"class": "classified-table__data"}):
-    for article in elem:
-        try:
-            value_list.append(article)
-        except AttributeError or TypeError:
-            pass
+# value_list=[]
+# for elem in soup.find_all("td", attrs={"class": "classified-table__data"}):
+#     for article in elem:
+#         try:
+#             value_list.append(article)
+#         except AttributeError or TypeError:
+#             pass
 
-print(value_list)
+# print(value_list)
