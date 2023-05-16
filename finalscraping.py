@@ -48,9 +48,6 @@ def extract_x_urls(number_of_urls: int=30) -> List[str]:
             
     return list(set(sum(full_urls_list,[])))
     
-extract_x_urls(30)
-
-
 pd.set_option('display.width', None)
 
 def missing_data(url):
@@ -82,45 +79,34 @@ def make_one_data_frame(url):
         
     except:
         print("error while getting the data")
+        return pd.DataFrame()
     return full_df
-make_one_data_frame("https://www.immoweb.be/en/classified/house/for-sale/kortrijk/8500/10564478")
-
-
-
-list_of_urls = extract_x_urls(10000)
-print(len(list_of_urls))
-print('list ready')
-dataframes_list = []
-with ThreadPoolExecutor() as pool:
-    results = list(pool.map(make_one_data_frame, list_of_urls))
-    for result in results:
-        dataframes_list.append(result)
-
-full_df = pd.concat(dataframes_list).reset_index(drop=True)
-full_df.dropna(thresh=2,inplace=True)
-print('done extracting')
-#full_df.to_csv("df.csv")
-full_df
-
 
 def data_clean(df, numerical_cols):
-    # Drop empty rows
-    df = df.dropna(how='all')
-
-    # Extract numerical values from all columns
+    threshold = len(df.columns)-5
+    df = df.dropna(thresh=threshold)
     for col in numerical_cols:
         df[col] = df[col].str.extract(r'(\d+)')
-
-    # Replace 'yes' with 1 and 'no' with 0 in all columns
     df = df.replace({'Yes': 1, 'No': 0})
-
     return df
 
-numerical_cols = ['Number of frontages', 'Living area', 'Bedrooms', 'Bathrooms', 'Surface of the plot', 'Garden surface', 'Price']
+def extract_cleaned_data(no_of_urls):
 
-cleaned_data = data_clean(full_df, numerical_cols)
-cleaned_data.to_csv("cleaned_data_12000.csv")
-end=time.time()
-print(end - start)
+    list_of_urls = extract_x_urls(no_of_urls)
+    print(len(list_of_urls))
+    print('list ready')
+    dataframes_list = []
+    with ThreadPoolExecutor() as pool:
+        results = list(pool.map(make_one_data_frame, list_of_urls))
+        for result in results:
+            dataframes_list.append(result)
+    full_df = pd.concat(dataframes_list).reset_index(drop=True)
+    #full_df.dropna(thresh=2,inplace=True)
+    numerical_cols = ['Number of frontages', 'Living area', 'Bedrooms', 'Bathrooms', 'Surface of the plot', 'Garden surface']
+    cleaned_data = data_clean(full_df, numerical_cols)
+    cleaned_data.to_csv("cleaned_data_60.csv")
+    print('done extracting')
+    end=time.time()
+    print(end - start)
 
-
+extract_cleaned_data(60)
