@@ -1,5 +1,5 @@
 import utils.create_csv
 
-no_of_urls = 9990
+no_of_urls = 510
 
-create_csv(9990)
+utils.create_csv.extract_clean_data(no_of_urls)

@@ -7,10 +7,18 @@ import pandas as pd
 import time
 import re
 import numpy as np
+from tqdm import tqdm
 
 
 
 def extract_urls_lists(search_page_url: str) -> List[str]:
+    """
+    Extracts 30 urls from an immoweb browsing search page.
+    Scans the page for specific tags and urls under href references.
+
+    :param search_page_url: A string url from which to extract urls.
+    :return: List of properties urls.
+    """
     try:    
         response = requests.get(search_page_url, params = {})
     except Exception as e:
@@ -26,6 +34,15 @@ def extract_urls_lists(search_page_url: str) -> List[str]:
     return list_of_urls
 
 def extract_x_urls(number_of_urls: int=30) -> List[str]:
+    """
+    Extracts houses urls from immoweb. 
+    Scans the search pages for specific tags and urls under href references.
+    Depending on how many urls are asked, scans through up to 333 pages (the easiest available ones).
+    If the argument is > 10000, adds appartments urls to the data.
+
+    :param number_of_urls: The int number of urls you want to get.
+    :return: List of properties urls.
+    """
     immo_base_url = "https://www.immoweb.be/en/search/house/for-sale?countries=BE&page="
     immo_end_url = "&orderBy=relevance"
     searchpages_urls_list =[]
@@ -54,6 +71,13 @@ def extract_x_urls(number_of_urls: int=30) -> List[str]:
     return list(set(sum(full_urls_list,[])))
     
 def missing_data(url):
+    """
+    When scanning a url for data, some info is missed by pandas' read_html method.
+    This function looks specifically for this data.
+
+    :param url: A url string to fetch data from.
+    :return: A pandas DataFrame.
+    """
     response = requests.get(url)
 
     window_data = re.findall("window.dataLayer =(.+?);\n", response.text, re.S)
@@ -67,6 +91,7 @@ def missing_data(url):
     return df_dict
 
 def make_one_data_frame(url):
+    
     try:
         response = requests.get(url)
         test_page = response.text
@@ -100,11 +125,12 @@ def extract_clean_data(no_of_urls):
     print(f'Prepared {no_of_urls} urls to scan.')
 
     with ThreadPoolExecutor() as pool:
-        dataframes_list = list(pool.map(make_one_data_frame, list_of_urls))
-
+        dataframes_list = list(tqdm(pool.map(make_one_data_frame, list_of_urls), total = len(list_of_urls)))
+    index = 0
     for item in dataframes_list:
         if type(item) != pd.core.frame.DataFrame:
-            dataframes_list.pop(item)
+            dataframes_list.pop(index)
+        index += 1
 
     full_df = pd.concat(dataframes_list).reset_index(drop=True)
 
