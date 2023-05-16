@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 import pandas as pd
 import time
 import re
+import numpy as np
 start=time.time()
 
 
@@ -21,7 +22,7 @@ def extract_urls_lists(search_page_url: str) -> List[str]:
     return list_of_urls
 
 def extract_x_urls(number_of_urls: int=30) -> List[str]:
-    immo_base_url = "https://www.immoweb.be/en/search/house-and-apartment/for-sale?countries=BE&page="
+    immo_base_url = "https://www.immoweb.be/en/search/house/for-sale?countries=BE&page="
     immo_end_url = "&orderBy=relevance"
     searchpages_urls_list =[]
 
@@ -35,7 +36,7 @@ def extract_x_urls(number_of_urls: int=30) -> List[str]:
         full_urls_list=list(pool.map(extract_urls_lists, searchpages_urls_list))    
 
     if number_of_urls>9990:
-        immo_base_url = "https://www.immoweb.be/en/search/new-real-estate-project-apartments/for-sale?countries=BE&page="
+        immo_base_url = "https://www.immoweb.be/en/search/apartment/for-sale?countries=BE&page="
         immo_end_url = "&orderBy=relevance"
         searchpages_urls_list =[]
 
@@ -88,6 +89,7 @@ def data_clean(df, numerical_cols):
     for col in numerical_cols:
         df[col] = df[col].str.extract(r'(\d+)')
     df = df.replace({'Yes': 1, 'No': 0})
+    df=df.replace(np.nan,'None',regex=True)
     return df
 
 def extract_cleaned_data(no_of_urls):
@@ -104,9 +106,9 @@ def extract_cleaned_data(no_of_urls):
     #full_df.dropna(thresh=2,inplace=True)
     numerical_cols = ['Number of frontages', 'Living area', 'Bedrooms', 'Bathrooms', 'Surface of the plot', 'Garden surface']
     cleaned_data = data_clean(full_df, numerical_cols)
-    cleaned_data.to_csv("cleaned_data_60.csv")
+    cleaned_data.to_csv("cleaned_data_18000.csv")
     print('done extracting')
     end=time.time()
     print(end - start)
 
-extract_cleaned_data(60)
+extract_cleaned_data(18000)
