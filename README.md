@@ -21,5 +21,5 @@ Mainly, the script uses these libraries:
 Clone the repository and run src/main.py 
 
 ## Authors:
-Credit goes to **Kardiç Said**,**Mirzayev Dastan**, **Subramani Sivasankari** and **Hupin Grégoire**.
+Credit goes to **Kardiç Said**, **Mirzayev Dastan**, **Subramani Sivasankari** and **Hupin Grégoire**.
   
